@@ -6,6 +6,28 @@ Kiwi(키위)는 **라떼색 장모 닥스훈트**입니다. 원본 일러스트�
 마스크 단위 이동으로 움직이는 **픽셀 기반 2.5D 리그**입니다. 3D 모델이 아닙니다.
 이 저장소는 Codex 데스크톱 펫 v2 패키지(`dist/kiwi-2d/`)와, 그 패키지를 다시 만드는 소스 전체를 담고 있습니다.
 
+## 바로 설치 / Quick install
+
+Codex 데스크톱의 custom pet v2를 지원하는 버전이 필요합니다. / Requires a Codex desktop build that supports custom pet v2.
+
+macOS / Linux 터미널에 붙여 넣으세요(이미 같은 폴더가 있으면 덮어쓰지 않고 멈춥니다). / Paste into a terminal (stops instead of overwriting an existing folder):
+
+```sh
+pet_dir="${CODEX_HOME:-$HOME/.codex}/pets/kiwi-2d"
+[ -e "$pet_dir" ] && { echo "already exists: $pet_dir"; } || {
+  mkdir -p "$pet_dir" &&
+  base=https://raw.githubusercontent.com/juicos61-arch/kiwi-threejs-pet/main/dist/kiwi-2d &&
+  curl -fsSL -o "$pet_dir/pet.json" "$base/pet.json" &&
+  curl -fsSL -o "$pet_dir/spritesheet.webp" "$base/spritesheet.webp" &&
+  echo "installed: $pet_dir"
+}
+```
+
+또는 [Releases](https://github.com/juicos61-arch/kiwi-threejs-pet/releases)의 `kiwi-2d.zip`을 받아 `~/.codex/pets/kiwi-2d/`에 `pet.json`과 `spritesheet.webp`를 넣으세요.
+Or download `kiwi-2d.zip` from Releases and put `pet.json` + `spritesheet.webp` into `~/.codex/pets/kiwi-2d/`.
+
+그다음 Codex의 펫 선택 화면에서 **Kiwi**를 고르세요(선택 화면 구성은 Codex 버전에 따라 다를 수 있습니다). / Then pick **Kiwi** in Codex's pet picker (the picker may differ by Codex version).
+
 ## 펫 패키지
 
 `dist/kiwi-2d/spritesheet.webp`(1536×2288, 192×208 셀, 무손실) + `pet.json`.
