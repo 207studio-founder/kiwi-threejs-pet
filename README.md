@@ -31,7 +31,7 @@ Codex 펫 폴더(예: `~/.codex/pets/kiwi-2d/`)에 두 파일을 복사하면 �
 
 ## 실행·미리보기
 
-요구 사항: Node.js 18+ (확인: 20 이상 권장), 최신 Chrome/Safari(WebGL2).
+요구 사항: Node.js(확인한 버전: v24.15.0), WebGL2 브라우저(확인: Chrome headless). Safari·다른 Node 버전은 확인하지 않았습니다.
 
 ```bash
 npm ci            # three 0.180.0 한 개
@@ -85,6 +85,7 @@ docs/                       미리보기 GIF·썸네일
 ## 라이선스
 
 - **코드**(`src/`, `tools/`, `server.mjs`, `*.html`, 설정 파일): [MIT](LICENSE), © 2026 juicos61-arch.
+- 그림에 대한 예외는 [ARTWORK.md](ARTWORK.md)에도 적어 두었습니다.
 - **그림**(`assets/source/kiwi_turnaround.webp`, `assets/derived/*`, `dist/kiwi-2d/spritesheet.webp`, `docs/*` 이미지): **MIT 적용 대상이 아닙니다.**
   저장소 소유자가 권리를 보유하며, 공개 재사용 조건은 아직 정해지지 않았습니다. 이 프로젝트를 실행·빌드하고 살펴보는 목적의 사용 외에는, 재배포·수정·상업적 이용 전에 소유자에게 문의해 주세요.
 
