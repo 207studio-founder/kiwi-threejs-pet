@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiwi Idle</title>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js" } }</script>
+<style>
+  :root { --ui: #fbf7ef; --ink: #3a2d22; --line: #e3d6c3; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--ui); color: var(--ink); font: 13px/1.4 -apple-system, system-ui, sans-serif; }
+  body { display: grid; grid-template-rows: 1fr auto; }
+  main { display: grid; grid-template-columns: 1fr auto; min-height: 0; }
+  #stage { position: relative; overflow: hidden; margin: 12px; border: 1px solid var(--line); border-radius: 8px; min-height: 300px; }
+  #stage[data-bg="checker"] { background: repeating-conic-gradient(#cfcfcf 0 25%, #fff 0 50%) 0 0 / 24px 24px; }
+  #stage[data-bg="white"] { background: #fff; }
+  #stage[data-bg="black"] { background: #000; }
+  #stage[data-bg="cream"] { background: #fdf3d0; }
+  #view { position: absolute; display: block; }
+  #refimg { position: absolute; left: 8px; top: 8px; width: 22%; min-width: 120px; border: 1px solid var(--line); background: #fdf3d0; }
+  aside { width: 230px; padding: 12px 12px 12px 0; display: flex; flex-direction: column; gap: 14px; }
+  fieldset { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; margin: 0; }
+  legend { padding: 0 4px; font-weight: 600; }
+  label { display: flex; gap: 6px; align-items: center; margin: 3px 0; }
+  .hint { color: #8a7a68; font-size: 11px; }
+  button { font: inherit; padding: 4px 8px; border: 1px solid var(--line); background: #fff; border-radius: 6px; cursor: pointer; }
+  button.on { background: var(--ink); color: #fff; }
+  #mini { width: 104px; height: 118px; background: repeating-conic-gradient(#ddd 0 25%, #fff 0 50%) 0 0 / 12px 12px; border: 1px solid var(--line); }
+  footer { display: flex; gap: 10px; align-items: center; padding: 0 12px 12px; }
+  #time { flex: 1; }
+  #readout { font-variant-numeric: tabular-nums; min-width: 330px; }
+  @media (max-width: 700px) { main { grid-template-columns: 1fr; } aside { width: auto; padding: 0 12px; } #readout { min-width: 0; } }
+</style>
+</head>
+<body>
+<main>
+  <div id="stage" data-bg="checker">
+    <canvas id="view"></canvas>
+    <img id="refimg" src="./assets/derived/front_crop.png" alt="원본 정면(참조)" hidden>
+  </div>
+  <aside>
+    <fieldset><legend>배경</legend>
+      <button data-bg="checker" class="on">체커</button>
+      <button data-bg="white">흰색</button>
+      <button data-bg="black">검정</button>
+      <button data-bg="cream">원본색</button>
+      <label><input type="checkbox" id="ref"> 원본 정면 참조 표시</label>
+    </fieldset>
+    <fieldset><legend>동작</legend>
+      <label><input type="checkbox" id="en-breath"> 호흡</label>
+      <label><input type="checkbox" id="en-blink"> 눈 깜빡임</label>
+      <label><input type="checkbox" id="en-tail"> 꼬리</label>
+      <div class="hint">정면 원본에서 꼬리가 보이지 않아 꼬리 동작은 화면에 나타나지 않음</div>
+      <label><input type="checkbox" id="en-shadow"> 접지 그림자(추가 요소)</label>
+    </fieldset>
+    <fieldset><legend>펫 크기 미리보기</legend>
+      <canvas id="mini" width="104" height="118"></canvas>
+    </fieldset>
+    <fieldset><legend>PNG 시퀀스</legend>
+      <label>fps <select id="fps"><option>12</option><option>24</option><option selected>30</option></select>
+        배율 <select id="scale"><option>0.25</option><option>0.5</option><option selected>1</option></select></label>
+      <button id="exp-server">export/ 폴더에 저장</button>
+      <button id="exp-zip">ZIP 다운로드</button>
+      <div id="status" class="hint"></div>
+    </fieldset>
+  </aside>
+</main>
+<footer>
+  <button id="play">일시정지</button>
+  <input id="time" type="range" min="0" step="0.001" value="0">
+  <select id="speed"><option value="0.25">0.25×</option><option value="0.5">0.5×</option><option value="1" selected>1×</option></select>
+  <span id="readout"></span>
+</footer>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

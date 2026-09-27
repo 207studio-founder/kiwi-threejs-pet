@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiwi Codex Pet</title>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js" } }</script>
+<style>
+  :root { --line: #e3d6c3; }
+  body { margin: 0; font: 13px/1.4 -apple-system, system-ui, sans-serif; color: #3a2d22; background: #fbf7ef; }
+  body[data-bg="checker"] .bg { background: repeating-conic-gradient(#cfcfcf 0 25%, #fff 0 50%) 0 0 / 16px 16px; }
+  body[data-bg="white"] .bg { background: #fff; }
+  body[data-bg="black"] .bg { background: #000; }
+  header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  main { display: flex; flex-wrap: wrap; gap: 16px; padding: 12px; align-items: flex-start; }
+  figure { margin: 0; }
+  figcaption { font-size: 11px; color: #8a7a68; }
+  canvas { display: block; border: 1px solid var(--line); }
+  #view { width: 384px; height: 416px; }
+  #cellbig { width: 288px; height: 312px; }
+  button, select { font: inherit; }
+</style>
+</head>
+<body data-bg="checker">
+<header>
+  <select id="state"></select>
+  <button id="play">일시정지</button>
+  <label>look 각도 <input id="angle" type="range" min="0" max="360" step="22.5" value="0"></label>
+  <label><input id="autolook" type="checkbox" checked> 자동 회전</label>
+  <button data-bg="checker">체커</button><button data-bg="white">흰색</button><button data-bg="black">검정</button>
+  <button id="export">Codex atlas 내보내기</button>
+  <span id="status"></span>
+  <span id="readout"></span>
+</header>
+<main>
+  <figure><canvas id="view" class="bg"></canvas><figcaption>스테이지 768×832 (절반 표시)</figcaption></figure>
+  <figure><canvas id="cell" width="192" height="208" class="bg"></canvas><figcaption>실물 셀 192×208</figcaption></figure>
+  <figure><canvas id="cellbig" width="576" height="624" class="bg"></canvas><figcaption>셀 3배 (nearest)</figcaption></figure>
+</main>
+<script type="module" src="./src/pet-main.js"></script>
+</body>
+</html>
