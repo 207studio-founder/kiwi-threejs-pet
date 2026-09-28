@@ -8,7 +8,7 @@ character artwork of Kiwi:
 - `dist/kiwi-2d/spritesheet.webp`
 - images in `docs/`
 
-The repository owner (juicos61-arch) retains the rights to this artwork. Terms for
+The repository owner (207studio-founder) retains the rights to this artwork. Terms for
 public reuse have not been decided yet. You may use it to run, build and study this
 project; please contact the owner before redistributing, modifying or using it
 commercially.

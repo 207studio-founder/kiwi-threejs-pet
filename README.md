@@ -16,14 +16,14 @@ macOS / Linux 터미널에 붙여 넣으세요(이미 같은 폴더가 있으면
 pet_dir="${CODEX_HOME:-$HOME/.codex}/pets/kiwi-2d"
 [ -e "$pet_dir" ] && { echo "already exists: $pet_dir"; } || {
   mkdir -p "$pet_dir" &&
-  base=https://raw.githubusercontent.com/juicos61-arch/kiwi-threejs-pet/main/dist/kiwi-2d &&
+  base=https://raw.githubusercontent.com/207studio-founder/kiwi-threejs-pet/main/dist/kiwi-2d &&
   curl -fsSL -o "$pet_dir/pet.json" "$base/pet.json" &&
   curl -fsSL -o "$pet_dir/spritesheet.webp" "$base/spritesheet.webp" &&
   echo "installed: $pet_dir"
 }
 ```
 
-또는 [Releases](https://github.com/juicos61-arch/kiwi-threejs-pet/releases)의 `kiwi-2d.zip`을 받아 `~/.codex/pets/kiwi-2d/`에 `pet.json`과 `spritesheet.webp`를 넣으세요.
+또는 [Releases](https://github.com/207studio-founder/kiwi-threejs-pet/releases)의 `kiwi-2d.zip`을 받아 `~/.codex/pets/kiwi-2d/`에 `pet.json`과 `spritesheet.webp`를 넣으세요.
 Or download `kiwi-2d.zip` from Releases and put `pet.json` + `spritesheet.webp` into `~/.codex/pets/kiwi-2d/`.
 
 그다음 Codex의 펫 선택 화면에서 **Kiwi**를 고르세요(선택 화면 구성은 Codex 버전에 따라 다를 수 있습니다). / Then pick **Kiwi** in Codex's pet picker (the picker may differ by Codex version).
@@ -106,7 +106,7 @@ docs/                       미리보기 GIF·썸네일
 
 ## 라이선스
 
-- **코드**(`src/`, `tools/`, `server.mjs`, `*.html`, 설정 파일): [MIT](LICENSE), © 2026 juicos61-arch.
+- **코드**(`src/`, `tools/`, `server.mjs`, `*.html`, 설정 파일): [MIT](LICENSE), © 2026 207studio-founder.
 - 그림에 대한 예외는 [ARTWORK.md](ARTWORK.md)에도 적어 두었습니다.
 - **그림**(`assets/source/kiwi_turnaround.webp`, `assets/derived/*`, `dist/kiwi-2d/spritesheet.webp`, `docs/*` 이미지): **MIT 적용 대상이 아닙니다.**
   저장소 소유자가 권리를 보유하며, 공개 재사용 조건은 아직 정해지지 않았습니다. 이 프로젝트를 실행·빌드하고 살펴보는 목적의 사용 외에는, 재배포·수정·상업적 이용 전에 소유자에게 문의해 주세요.
