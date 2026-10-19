@@ -1,0 +1,51 @@
+test_default_front_only (__main__.DispatchTests.test_default_front_only) ... ok
+test_front_failure_stops (__main__.DispatchTests.test_front_failure_stops) ... ok
+test_repeated_flag_does_not_repeat_side (__main__.DispatchTests.test_repeated_flag_does_not_repeat_side) ... FAIL
+test_side_calls_front_then_side (__main__.DispatchTests.test_side_calls_front_then_side) ... FAIL
+test_side_failure_propagates (__main__.DispatchTests.test_side_failure_propagates) ... FAIL
+
+======================================================================
+FAIL: test_repeated_flag_does_not_repeat_side (__main__.DispatchTests.test_repeated_flag_does_not_repeat_side)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/pet-side-entrypoint/test_dispatch.py", line 37, in test_repeated_flag_does_not_repeat_side
+    calls,side=self.invoke(['--side','--side']);self.assertEqual(calls,['front','side']);side.assert_called_once_with()
+                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['front'] != ['front', 'side']
+
+Second list contains 1 additional elements.
+First extra element 1:
+'side'
+
+- ['front']
++ ['front', 'side']
+
+======================================================================
+FAIL: test_side_calls_front_then_side (__main__.DispatchTests.test_side_calls_front_then_side)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/pet-side-entrypoint/test_dispatch.py", line 35, in test_side_calls_front_then_side
+    calls,side=self.invoke(['--side']);self.assertEqual(calls,['front','side']);side.assert_called_once_with()
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Lists differ: ['front'] != ['front', 'side']
+
+Second list contains 1 additional elements.
+First extra element 1:
+'side'
+
+- ['front']
++ ['front', 'side']
+
+======================================================================
+FAIL: test_side_failure_propagates (__main__.DispatchTests.test_side_failure_propagates)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/pet-side-entrypoint/test_dispatch.py", line 41, in test_side_failure_propagates
+    with self.assertRaisesRegex(RuntimeError,'side failed'):self.invoke(['--side'],side_error=RuntimeError('side failed'))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: RuntimeError not raised
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.006s
+
+FAILED (failures=3)
