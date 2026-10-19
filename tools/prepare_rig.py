@@ -92,7 +92,14 @@ def front():
         cv2.imwrite(os.path.join(DBG, "front_masks_overlay.png"), ov.astype(np.uint8))
 
 
-if __name__ == "__main__":
+def main(argv=None):
+    args = sys.argv[1:] if argv is None else argv
     front()
-    if "--side" in sys.argv:
-        import prepare_side  # noqa: F401  (added in the side-rig step)
+    if "--side" in args:
+        import prepare_side
+        prepare_side.main()
+
+
+if __name__ == "__main__":
+    main()
+
