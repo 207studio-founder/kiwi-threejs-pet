@@ -30,7 +30,7 @@ class PreflightTests(unittest.TestCase):
         for state, _, durations in self.m.ROWS:
             for i in range(len(durations)):
                 self.png(f'{state}/{i:02d}.png')
-        for i in range(16): self.png(f'look/{i:02d}.png')
+        for i in range(16): self.png(f'look/{i:02d}_{i * 225:04d}.png')
         self.png('neutral/neutral.png')
 
     def png(self, name, size=(8, 8)):
@@ -61,7 +61,7 @@ class PreflightTests(unittest.TestCase):
         self.reject_before_write()
 
     def test_missing_look(self):
-        (Path(self.m.STAGE) / 'look/00.png').unlink()
+        (Path(self.m.STAGE) / 'look/00_0000.png').unlink()
         self.reject_before_write()
 
     def test_missing_neutral(self):
@@ -74,6 +74,36 @@ class PreflightTests(unittest.TestCase):
 
     def test_corrupt_png(self):
         (Path(self.m.STAGE) / 'idle/00.png').write_bytes(b'not a png')
+        self.reject_before_write()
+
+    def test_replacement_stray_same_count(self):
+        (Path(self.m.STAGE) / 'idle/00.png').rename(Path(self.m.STAGE) / 'idle/stale.png')
+        self.reject_before_write()
+
+    def test_wrong_look_angle_same_count(self):
+        (Path(self.m.STAGE) / 'look/00_0000.png').rename(Path(self.m.STAGE) / 'look/00_0001.png')
+        self.reject_before_write()
+
+    def test_rgb_loses_alpha(self):
+        Image.new('RGB', (8, 8), (10, 20, 30)).save(Path(self.m.STAGE) / 'idle/00.png')
+        self.reject_before_write()
+
+    def test_checksum_valid_undecodable_pixels(self):
+        import struct
+        import zlib
+        path = Path(self.m.STAGE) / 'idle/00.png'
+        data = path.read_bytes()
+        output = bytearray(data[:8])
+        offset = 8
+        while offset < len(data):
+            size = struct.unpack('>I', data[offset:offset+4])[0]
+            kind = data[offset+4:offset+8]
+            chunk = data[offset+8:offset+8+size]
+            if kind == b'IDAT': chunk = b'invalid zlib data'
+            output.extend(struct.pack('>I', len(chunk)) + kind + chunk + struct.pack('>I', zlib.crc32(kind + chunk)))
+            offset += 12 + size
+        path.write_bytes(output)
+        with Image.open(path) as image: image.verify()  # container itself is valid
         self.reject_before_write()
 
     def test_complete_inputs_reach_existing_build(self):
