@@ -1,0 +1,153 @@
+test_complete_inputs_reach_existing_build (test_atlas_preflight.PreflightTests.test_complete_inputs_reach_existing_build) ... ok
+test_corrupt_png (test_atlas_preflight.PreflightTests.test_corrupt_png) ... FAIL
+test_extra_frame (test_atlas_preflight.PreflightTests.test_extra_frame) ... FAIL
+test_missing_look (test_atlas_preflight.PreflightTests.test_missing_look) ... FAIL
+test_missing_neutral (test_atlas_preflight.PreflightTests.test_missing_neutral) ... FAIL
+test_missing_state (test_atlas_preflight.PreflightTests.test_missing_state) ... FAIL
+test_wrong_dimensions (test_atlas_preflight.PreflightTests.test_wrong_dimensions) ... FAIL
+test_wrong_state_count (test_atlas_preflight.PreflightTests.test_wrong_state_count) ... FAIL
+
+======================================================================
+FAIL: test_corrupt_png (test_atlas_preflight.PreflightTests.test_corrupt_png)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 77, in test_corrupt_png
+    self.reject_before_write()
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 47, in reject_before_write
+    self.m.main()
+  File "/workspace/shared/audit-fixes/atlas-preflight/original.py", line 68, in main
+    os.makedirs(QA, exist_ok=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: output write attempted
+
+======================================================================
+FAIL: test_extra_frame (test_atlas_preflight.PreflightTests.test_extra_frame)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 61, in test_extra_frame
+    self.reject_before_write()
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 47, in reject_before_write
+    self.m.main()
+  File "/workspace/shared/audit-fixes/atlas-preflight/original.py", line 68, in main
+    os.makedirs(QA, exist_ok=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: output write attempted
+
+======================================================================
+FAIL: test_missing_look (test_atlas_preflight.PreflightTests.test_missing_look)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 65, in test_missing_look
+    self.reject_before_write()
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 47, in reject_before_write
+    self.m.main()
+  File "/workspace/shared/audit-fixes/atlas-preflight/original.py", line 68, in main
+    os.makedirs(QA, exist_ok=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: output write attempted
+
+======================================================================
+FAIL: test_missing_neutral (test_atlas_preflight.PreflightTests.test_missing_neutral)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 69, in test_missing_neutral
+    self.reject_before_write()
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 47, in reject_before_write
+    self.m.main()
+  File "/workspace/shared/audit-fixes/atlas-preflight/original.py", line 68, in main
+    os.makedirs(QA, exist_ok=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: output write attempted
+
+======================================================================
+FAIL: test_missing_state (test_atlas_preflight.PreflightTests.test_missing_state)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 53, in test_missing_state
+    self.reject_before_write()
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 47, in reject_before_write
+    self.m.main()
+  File "/workspace/shared/audit-fixes/atlas-preflight/original.py", line 68, in main
+    os.makedirs(QA, exist_ok=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: output write attempted
+
+======================================================================
+FAIL: test_wrong_dimensions (test_atlas_preflight.PreflightTests.test_wrong_dimensions)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 73, in test_wrong_dimensions
+    self.reject_before_write()
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 47, in reject_before_write
+    self.m.main()
+  File "/workspace/shared/audit-fixes/atlas-preflight/original.py", line 68, in main
+    os.makedirs(QA, exist_ok=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: output write attempted
+
+======================================================================
+FAIL: test_wrong_state_count (test_atlas_preflight.PreflightTests.test_wrong_state_count)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 57, in test_wrong_state_count
+    self.reject_before_write()
+  File "/workspace/shared/audit-fixes/atlas-preflight/test_atlas_preflight.py", line 47, in reject_before_write
+    self.m.main()
+  File "/workspace/shared/audit-fixes/atlas-preflight/original.py", line 68, in main
+    os.makedirs(QA, exist_ok=True)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+AssertionError: output write attempted
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.124s
+
+FAILED (failures=7)
