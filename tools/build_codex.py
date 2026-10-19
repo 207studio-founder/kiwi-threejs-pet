@@ -64,7 +64,31 @@ def run(cmd, name):
     return p.returncode
 
 
+def validate_stage_inputs():
+    """Fail before touching outputs if a required input is absent or malformed."""
+    errors = []
+    inputs = []
+    for state, expected in [(name, len(durs)) for name, _, durs in ROWS] + [("look", 16)]:
+        folder = os.path.join(STAGE, state)
+        names = sorted(f for f in os.listdir(folder) if f.endswith(".png")) if os.path.isdir(folder) else []
+        if len(names) != expected:
+            errors.append(f"{state}: {len(names)}/{expected} PNG frames")
+        inputs.extend(os.path.join(folder, name) for name in names)
+    inputs.append(os.path.join(STAGE, "neutral", "neutral.png"))
+    for path in inputs:
+        try:
+            with Image.open(path) as image:
+                if image.format != "PNG" or image.size != (CW * N, CH * N):
+                    raise ValueError(f"expected PNG {(CW * N, CH * N)}, got {image.format} {image.size}")
+                image.verify()
+        except (OSError, ValueError, SyntaxError) as exc:
+            errors.append(f"{os.path.relpath(path, STAGE)}: {exc}")
+    if errors:
+        raise ValueError("Incomplete or invalid stage inputs; existing outputs preserved:\n" + "\n".join(errors))
+
+
 def main():
+    validate_stage_inputs()
     os.makedirs(QA, exist_ok=True)
     os.makedirs(DIST, exist_ok=True)
     report = {"rows": {}, "missing": []}
@@ -200,3 +224,4 @@ def previews(cells):
 
 if __name__ == "__main__":
     main()
+
