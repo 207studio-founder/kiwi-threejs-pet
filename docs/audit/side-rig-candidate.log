@@ -1,0 +1,10 @@
+test_default_front_only (__main__.DispatchTests.test_default_front_only) ... ok
+test_front_failure_stops (__main__.DispatchTests.test_front_failure_stops) ... ok
+test_repeated_flag_does_not_repeat_side (__main__.DispatchTests.test_repeated_flag_does_not_repeat_side) ... ok
+test_side_calls_front_then_side (__main__.DispatchTests.test_side_calls_front_then_side) ... ok
+test_side_failure_propagates (__main__.DispatchTests.test_side_failure_propagates) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.007s
+
+OK
