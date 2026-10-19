@@ -22,3 +22,7 @@ This patch fixes invalid/missing input publication, not the entire build transac
 ## Risk and rollback
 
 Low code scope: one read-only preflight call before existing build. Invalid input now raises a descriptive error instead of silently continuing. Revert this source/test commit to restore the old behavior. Existing optional validator policy is unchanged and needs separate review before a release-quality claim.
+
+## Review corrections
+
+Final baseline: 11 failures / 12 tests; candidate: 12/12 pass. Added exact filename-set checks matching src/pet-main.js atlasJobs (state NN.png; look NN_AAAA.png at 22.5-degree increments), native RGBA mode, and actual pixel decoding after container verification. New cases cover same-count stale filename substitution, wrong look angle, lost alpha, and valid PNG checksums with invalid compressed pixels. The latter passes Pillow verify() but is rejected by load() before output creation. Earlier eight-test logs are historical; final logs supersede them.

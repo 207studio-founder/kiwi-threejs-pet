@@ -1,0 +1,17 @@
+test_checksum_valid_undecodable_pixels (test_atlas_preflight.PreflightTests.test_checksum_valid_undecodable_pixels) ... ok
+test_complete_inputs_reach_existing_build (test_atlas_preflight.PreflightTests.test_complete_inputs_reach_existing_build) ... ok
+test_corrupt_png (test_atlas_preflight.PreflightTests.test_corrupt_png) ... ok
+test_extra_frame (test_atlas_preflight.PreflightTests.test_extra_frame) ... ok
+test_missing_look (test_atlas_preflight.PreflightTests.test_missing_look) ... ok
+test_missing_neutral (test_atlas_preflight.PreflightTests.test_missing_neutral) ... ok
+test_missing_state (test_atlas_preflight.PreflightTests.test_missing_state) ... ok
+test_replacement_stray_same_count (test_atlas_preflight.PreflightTests.test_replacement_stray_same_count) ... ok
+test_rgb_loses_alpha (test_atlas_preflight.PreflightTests.test_rgb_loses_alpha) ... ok
+test_wrong_dimensions (test_atlas_preflight.PreflightTests.test_wrong_dimensions) ... ok
+test_wrong_look_angle_same_count (test_atlas_preflight.PreflightTests.test_wrong_look_angle_same_count) ... ok
+test_wrong_state_count (test_atlas_preflight.PreflightTests.test_wrong_state_count) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.185s
+
+OK
