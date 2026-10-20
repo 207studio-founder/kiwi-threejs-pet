@@ -81,6 +81,16 @@ P1은 핵심 여정의 실패·결과 보존 위험을 먼저 확인할 항목�
 
 단계별 우선순위: 1단계 계측 계획·정지 계약 → 2단계 변경 시 렌더 설계 → 3단계 실측 후 내보내기 메모리 개선 선택.
 
+### 후속 확인 · 내보내기 결과 보존 근거와 테스트 범위
+
+기존 P1 내보내기 제안의 근거를 확장했다. 소스로 확인: builder는 stage preflight 뒤 frame·atlas·`dist` 파일을 먼저 기록하고 외부 validator를 호출한다. validator 실패·뒤쪽 QA 예외 때 앞서 기록한 배포 파일을 되돌리는 분기는 없다. validator 부재는 skipped로 기록되고 성공 exit에 허용된다. skipped 자체는 README가 설명한 의도된 동작이며, 완전한 검증 성공과 구분할 필요가 있다.
+
+근거: [tools/build_codex.py](https://github.com/207studio-founder/kiwi-threejs-pet/blob/2e6079f866f59a48bbc12546b44f7e986ce00ff8/tools/build_codex.py#L124-L180); [src/pet-main.js](https://github.com/207studio-founder/kiwi-threejs-pet/blob/2e6079f866f59a48bbc12546b44f7e986ce00ff8/src/pet-main.js#L59-L70). UI는 마지막에 build exit를 표시하고 상세 결과는 반환·console로 넘긴다.
+
+추가로 읽은 preflight 테스트는 합성 입력의 누락·잘못된 이름·alpha·손상 decode를 출력 생성 전에 거부하는지 검사한다. 이는 유효 입력 뒤 validator 실패·쓰기 실패·동시 export의 마지막 정상 출력 보존을 검증하지 않는다. dispatch 테스트는 이미지 producer를 stub으로 바꾼다. [tests/test_atlas_preflight.py](https://github.com/207studio-founder/kiwi-threejs-pet/blob/2e6079f866f59a48bbc12546b44f7e986ce00ff8/tests/test_atlas_preflight.py#L42-L112); [tests/test_rig_dispatch.py](https://github.com/207studio-founder/kiwi-threejs-pet/blob/2e6079f866f59a48bbc12546b44f7e986ce00ff8/tests/test_rig_dispatch.py#L12-L41).
+
+사용자 영향·원인·개선·이득·위험·우선순위는 기존 내보내기 P1의 작업 수명·검증 후 게시 제안에 연결한다. 추가 실험은 성공적인 preflight 뒤 합성 validator·저장 실패를 주입해 마지막 정상 파일 쌍·검증 상태가 보존되는지 확인하는 것이다. 실패 후 정상 atlas가 실제로 손상됐다는 관찰은 없고 시간·메모리·복구 성공률은 미측정이다.
+
 ## 검토 축별 판단
 
 | 축 | 이번 판단·한계 |
@@ -98,82 +108,83 @@ P1은 핵심 여정의 실패·결과 보존 위험을 먼저 확인할 항목�
 
 ## 미검토·제외 범위와 다음 검토
 
-핵심 설치·v1/v2 UI·서버·리그 일부·builder 일부를 검토했다. 나머지 리그 수학·에셋 준비 도구·테스트·metadata·의존성·생성물은 전체 의미 검토 미완료다. 이미지·원본 그림·실제 펫·브라우저를 열지 않았다.
+v1/v2 UI·정면/측면 shader·포즈 수학·서버·전체 에셋 준비 및 builder·수치 검사·테스트 본문과 선언된 의존성을 후속 검토했다. 원본 이미지·파생 metadata·배포 atlas·바이너리·과거 로그·의존성 내부는 제외했다. 실제 렌더·픽셀·성능·합성 테스트 실행·최종 배포물 일치는 미검증이다.
 
 바이너리와 이미지의 시각 품질은 확인하지 않았다. 코드에 이미지 로딩·렌더링이 있다는 사실을 실제 이미지 검토로 취급하지 않는다. 실제 사용자 자료·개인 노트·원고·iCloud·인증 정보는 다음 실험에도 사용하지 않는다.
 
-다음 검토는 manifest의 미검토 1차 소스 중 위 여정의 호출자·실패 경로를 먼저 좁혀 진행한다. 외부 의존성·보존 구현의 전체 검토, 호스트 동작, 실제 배포물의 일치 여부는 별도 범위다. 이번 제안만으로 그 범위가 완료되었다고 표시하지 않는다.
+후속 검토는 허용된 1차 구현·보조 도구·리그·테스트의 본문과 호출·실패·출력 경로를 읽었다. 동일한 복제 구현은 본문 읽기 후 byte 동일성 또는 variant diff를 대조했다. 패턴 검색·트리 조사·파일 수집만으로 의미 검토를 완료 처리하지 않았다. 실제 자료·생성물·제3자 upstream·보안/설치 설정은 제외 상태를 유지하며, 아래 각 파일의 이유와 불확실성을 남긴다. 실행·배포물 일치·시각 품질까지 포함한 전체 검토 완료 주장은 하지 않는다.
 
 ## 검토 manifest
 
-GitHub Git Trees API의 고정 커밋 재귀 목록을 사용했다. 목록은 `truncated=false`였다. 파일 내용은 트리를 먼저 확인하고 지정한 소스 허용 목록에서만 읽었다. 전체 저장소 내용을 자동 실행·샘플링하는 검사는 하지 않았다. 표의 구간 밖은 읽은 파일 안에서도 의미 검토 완료로 계산하지 않는다.
+고정 커밋의 Git Trees 재귀 목록은 `truncated=false`였으며 모든 파일을 아래에 남겼다. 파일 트리를 먼저 보고 명시적 소스 허용 목록에서만 읽었다. 새 범위는 `continuation` 후속 읽기로 기록했다. 표의 의미 검토 구간은 실제 읽은 본문 또는 읽은 동일 구현과 정확히 대조한 variant다. 테스트는 본문·fixture·assertion을 읽었으며 실행하지 않았다. 생성물의 우연한 형식 확인은 검토 완료로 세지 않았다. 전체 저장소 샘플 자동 실행·앱·브라우저·Aside·시뮬레이터·Actions는 사용하지 않았다.
 
 | 분류 | 파일 수 |
 | --- | ---: |
-| 미검토: 의존성·빌드 metadata | 3 |
-| 미검토: 1차 소스·참조 문서 | 9 |
-| 검토 구간 있음 | 11 |
-| 제외: 바이너리·이미지·배포물 | 19 |
-| 미검토: 생성물·파생 metadata | 3 |
-| 미검토: 과거 검증·로그 | 6 |
-| 미검토: 테스트·실험 소스 | 2 |
+| 미검토·배포/추적 metadata | 1 |
+| 검토 구간 있음 | 22 |
+| 미검토·고지/법률 범위 | 1 |
+| 제외·바이너리/실제 에셋 | 19 |
+| 제외·생성/에셋 metadata | 3 |
+| 제외·과거 기록 | 6 |
+| 제외·의존성 잠금 | 1 |
 
-| 파일 | 검토 상태 |
-| --- | --- |
-| `.gitignore` | 미검토: 의존성·빌드 metadata |
-| `ARTWORK.md` | 미검토: 1차 소스·참조 문서 |
-| `LICENSE` | 미검토: 1차 소스·참조 문서 |
-| `README.md` | 검토 구간 1-119 |
-| `assets/derived/alpha_matte.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/base.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/eyes.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/front_crop.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/front_legs.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/front_masks.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/layout.json` | 미검토: 생성물·파생 metadata |
-| `assets/derived/plate.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/side_base.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/side_crop.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/side_eye.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/side_layout.json` | 미검토: 생성물·파생 metadata |
-| `assets/derived/side_masks.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/side_masks2.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/side_plate.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/derived/warp.png` | 제외: 바이너리·이미지·배포물 |
-| `assets/source/kiwi_turnaround.webp` | 제외: 바이너리·이미지·배포물 |
-| `dist/kiwi-2d/pet.json` | 미검토: 생성물·파생 metadata |
-| `dist/kiwi-2d/spritesheet.webp` | 제외: 바이너리·이미지·배포물 |
-| `docs/audit/2026-10-20-atlas-preflight.md` | 검토 구간 1-20 |
-| `docs/audit/2026-10-20-side-rig-dispatch.md` | 검토 구간 1-18 |
-| `docs/audit/atlas-preflight-baseline-final.log` | 미검토: 과거 검증·로그 |
-| `docs/audit/atlas-preflight-baseline.log` | 미검토: 과거 검증·로그 |
-| `docs/audit/atlas-preflight-candidate-final.log` | 미검토: 과거 검증·로그 |
-| `docs/audit/atlas-preflight-candidate.log` | 미검토: 과거 검증·로그 |
-| `docs/audit/side-rig-baseline.log` | 미검토: 과거 검증·로그 |
-| `docs/audit/side-rig-candidate.log` | 미검토: 과거 검증·로그 |
-| `docs/kiwi_promo.gif` | 제외: 바이너리·이미지·배포물 |
-| `docs/kiwi_promo_en.gif` | 제외: 바이너리·이미지·배포물 |
-| `docs/kiwi_thumb.png` | 제외: 바이너리·이미지·배포물 |
-| `index.html` | 미검토: 1차 소스·참조 문서 |
-| `package-lock.json` | 미검토: 의존성·빌드 metadata |
-| `package.json` | 검토 구간 1-12 |
-| `pet.html` | 검토 구간 1-42 |
-| `requirements.txt` | 미검토: 의존성·빌드 metadata |
-| `server.mjs` | 검토 구간 1-55 |
-| `src/kiwi.js` | 미검토: 1차 소스·참조 문서 |
-| `src/main.js` | 검토 구간 1-139 |
-| `src/pet-main.js` | 검토 구간 1-105 |
-| `src/pet.js` | 검토 구간 1-105,168-277 |
-| `src/poses.js` | 미검토: 1차 소스·참조 문서 |
-| `src/zip.js` | 검토 구간 1-41 |
-| `tests/test_atlas_preflight.py` | 미검토: 테스트·실험 소스 |
-| `tests/test_rig_dispatch.py` | 미검토: 테스트·실험 소스 |
-| `tools/build_codex.py` | 검토 구간 1-115,170-231 |
-| `tools/prepare_assets.py` | 미검토: 1차 소스·참조 문서 |
-| `tools/prepare_rig.py` | 미검토: 1차 소스·참조 문서 |
-| `tools/prepare_side.py` | 미검토: 1차 소스·참조 문서 |
-| `tools/verify_frames.py` | 미검토: 1차 소스·참조 문서 |
+| 파일 | 상태·읽은 구간 | 확인한 역할 또는 제외 이유 | 사용자 흐름에 남는 불확실성 |
+| --- | --- | --- | --- |
+| `.gitignore` | 미검토·배포/추적 metadata | 비실행 추적·정규화·플러그인 등록 metadata. 환경 설정/배포 검증은 수행하지 않음 | 실제 패키징 포함 파일·호스트 등록과 준비/설치 안내의 일치는 미검증 |
+| `ARTWORK.md` | 소스 의미 검토 1-16 | 코드 라이선스와 그림 재사용 권리를 구분하는 안내다. 권리 문구 확인을 실제 이미지 품질·사용 허락 확인으로 취급하지 않는다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `LICENSE` | 미검토·고지/법률 범위 | 실행 구현이 아닌 고지/라이선스 본문. 권리/법률 적합성 해석을 수행하지 않음 | 실제 재사용·재배포 조건 판단은 별도 확인 필요. 앱 동작/성능 증거는 아님 |
+| `README.md` | 소스 의미 검토 1-119 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/alpha_matte.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/base.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/eyes.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/front_crop.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/front_legs.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/front_masks.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/layout.json` | 제외·생성/에셋 metadata | 실제 에셋에서 생성된 layout·등록·선택·provenance/패키지 metadata. 생성물 제외 범위 유지 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/plate.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/side_base.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/side_crop.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/side_eye.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/side_layout.json` | 제외·생성/에셋 metadata | 실제 에셋에서 생성된 layout·등록·선택·provenance/패키지 metadata. 생성물 제외 범위 유지 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/side_masks.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/side_masks2.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/side_plate.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/derived/warp.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `assets/source/kiwi_turnaround.webp` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `dist/kiwi-2d/pet.json` | 제외·생성/에셋 metadata | 실제 에셋에서 생성된 layout·등록·선택·provenance/패키지 metadata. 생성물 제외 범위 유지 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `dist/kiwi-2d/spritesheet.webp` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `docs/audit/2026-10-20-atlas-preflight.md` | 소스 의미 검토 1-20 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `docs/audit/2026-10-20-side-rig-dispatch.md` | 소스 의미 검토 1-18 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `docs/audit/atlas-preflight-baseline-final.log` | 제외·과거 기록 | 과거 감사·실행 로그/기록은 현재 소스 동작·이번 실행 증거로 대체하지 않음 | 과거 성공·실패·성능이 현재 pinned 소스/배포 상태에 적용되는지는 미검증 |
+| `docs/audit/atlas-preflight-baseline.log` | 제외·과거 기록 | 과거 감사·실행 로그/기록은 현재 소스 동작·이번 실행 증거로 대체하지 않음 | 과거 성공·실패·성능이 현재 pinned 소스/배포 상태에 적용되는지는 미검증 |
+| `docs/audit/atlas-preflight-candidate-final.log` | 제외·과거 기록 | 과거 감사·실행 로그/기록은 현재 소스 동작·이번 실행 증거로 대체하지 않음 | 과거 성공·실패·성능이 현재 pinned 소스/배포 상태에 적용되는지는 미검증 |
+| `docs/audit/atlas-preflight-candidate.log` | 제외·과거 기록 | 과거 감사·실행 로그/기록은 현재 소스 동작·이번 실행 증거로 대체하지 않음 | 과거 성공·실패·성능이 현재 pinned 소스/배포 상태에 적용되는지는 미검증 |
+| `docs/audit/side-rig-baseline.log` | 제외·과거 기록 | 과거 감사·실행 로그/기록은 현재 소스 동작·이번 실행 증거로 대체하지 않음 | 과거 성공·실패·성능이 현재 pinned 소스/배포 상태에 적용되는지는 미검증 |
+| `docs/audit/side-rig-candidate.log` | 제외·과거 기록 | 과거 감사·실행 로그/기록은 현재 소스 동작·이번 실행 증거로 대체하지 않음 | 과거 성공·실패·성능이 현재 pinned 소스/배포 상태에 적용되는지는 미검증 |
+| `docs/kiwi_promo.gif` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `docs/kiwi_promo_en.gif` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `docs/kiwi_thumb.png` | 제외·바이너리/실제 에셋 | 이미지·geometry·압축 배포물·bundle은 실제 열람/디코딩/시각 평가에서 제외 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `index.html` | 소스 의미 검토 1-76 | v1의 배경·호흡·시간·속도·PNG/ZIP 조작과 반응형 스타일을 읽었다. tail 제어의 비표시 이유는 화면 문구로 설명된다. timeline·speed의 접근성 이름과 실제 키보드 작동은 별도 확인 대상이다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `package-lock.json` | 제외·의존성 잠금 | 외부 의존성 resolution 산출물. 패키지 내부·설치 검증은 이번 범위 밖 | 설치 가능성·플랫폼 호환·의존성 동작·해독/실행 비용은 미검증 |
+| `package.json` | 소스 의미 검토 1-12 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `pet.html` | 소스 의미 검토 1-42 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `requirements.txt` | 소스 의미 검토 1-3 | NumPy·OpenCV·Pillow의 고정 버전을 확인했다. dependency 내부·설치·현재 장비 호환은 미검증이다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `server.mjs` | 소스 의미 검토 1-55 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `src/kiwi.js` | 소스 의미 검토 1-185 | pose는 시간에 따른 순수 함수이고 loadKiwi가 공유 texture·uniform·scene을 만든다. frame renderer는 dispose를 제공하지만 UI의 scale별 cache 수명과 연결은 별도다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `src/main.js` | 소스 의미 검토 1-139 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `src/pet-main.js` | 소스 의미 검토 1-105 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `src/pet.js` | 소스 의미 검토 1-277 | 정면·측면 inverse warp shader, texture 로딩, side 실패 흡수, pose dispatch, renderer 구성을 모두 읽었다. 수식·shader 반복은 고정되지만 실제 GPU 점유·픽셀 품질은 미측정이다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `src/poses.js` | 소스 의미 검토 1-134 | 9개 상태의 포즈와 프레임 시간·16방향 look을 생성한다. 시간 wrap은 구현돼 있으며 UI의 유효 상태 선택 밖 입력·시각 연속성은 검증하지 않았다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `src/zip.js` | 소스 의미 검토 1-41 | 앞선 검토에서 이 구간의 사용자 진입·정상/실패 흐름·제약을 직접 읽음. 구간 밖 의미 검토나 실제 동작 성공으로 확장하지 않음 | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `tests/test_atlas_preflight.py` | 소스 의미 검토 1-115 | 합성 PNG와 기존 출력 sentinel로 누락·이름 교체·alpha 손실·손상 decode가 출력 생성 전에 거부되는지 검사한다. 전체 성공 빌드·validator 실패 후 게시 보존·동시 export는 다루지 않는다. 미실행이다. | 테스트 실행·통과·실제 호스트·시각/성능 결과는 미검증 |
+| `tests/test_rig_dispatch.py` | 소스 의미 검토 1-43 | AST의 main과 entrypoint를 stub 환경에서 호출해 front/side 순서·반복 flag·예외 전파를 확인하는 테스트다. 실제 이미지 파이프라인은 대체되어 있다. 미실행이다. | 테스트 실행·통과·실제 호스트·시각/성능 결과는 미검증 |
+| `tools/build_codex.py` | 소스 의미 검토 1-231 | 필수 stage를 decode까지 preflight한 뒤 프레임·atlas·dist 파일을 쓰고 외부 validator를 호출한다. validator 실패 전의 출력 게시를 되돌리는 transaction은 없고 skipped도 성공 exit에 허용한다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `tools/prepare_assets.py` | 소스 의미 검토 1-269 | 고정 원본 crop·GrabCut·matte·eye inpaint·warp·layout 생성을 순서대로 수행한다. 입력 원본을 수정하지 않지만 derived 출력은 단계마다 기록하고 이미지 쓰기 반환값은 확인하지 않는다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `tools/prepare_rig.py` | 소스 의미 검토 1-104 | front mask를 만든 뒤 --side일 때 prepare_side.main을 한 번 호출한다. front의 실패가 side 호출을 막는다. 실제 mask 품질은 검사하지 않았다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `tools/prepare_side.py` | 소스 의미 검토 1-203 | 고정 측면 crop·matte·눈 inpaint·다리쌍 mask·layout을 만든다. 비율·임계값은 특정 아트 전제이며 임의 입력 호환성을 주장할 수 없다. 출력 단계의 실패 원자성은 없다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
+| `tools/verify_frames.py` | 소스 의미 검토 1-64 | PNG 전체를 int16 배열 목록으로 읽어 안정성·루프 seam·눈·alpha·bbox 수치를 출력한다. pass/fail threshold를 강제하는 validator가 아니며 실제 픽셀 판정 증거로 쓸 수 없다. | 실제 그림/배포물 일치·픽셀 품질·GPU/메모리·준비/조작/복구 시간은 미검증 |
 
 ## 문서 품질 확인과 변경 경계
 
 고정 커밋의 파일·심볼·행 링크, manifest 누락·중복, 근거와 추론 구분, 미측정 표기, 공개 근거 경계를 확인한다. PR diff는 이 Markdown 문서 한 개 추가만 허용한다. 제품·테스트·설정·의존성·워크플로는 변경하지 않는다. 원본 코드·민감한 로그는 복사하지 않았다. 성능·기능 테스트는 수행하지 않았고, 앱 실행·설치·Actions·자동 리뷰 요청·병합·배포는 하지 않는다.
+
